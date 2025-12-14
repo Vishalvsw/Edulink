@@ -1,4 +1,4 @@
-import { Application, ApplicationStatus, Course, DashboardStats, UserRole } from "./types";
+import { Application, ApplicationStatus, Course, DashboardStats, UserRole, AgentStats } from "./types";
 
 export const MOCK_COURSES: Course[] = [
   {
@@ -48,6 +48,13 @@ export const MOCK_STATS: DashboardStats = {
   totalRevenue: 4500000,
   pendingReview: 34,
   activeAgents: 12
+};
+
+export const MOCK_AGENT_STATS: AgentStats = {
+  totalLeads: 45,
+  conversions: 12,
+  pendingCommissions: 15000,
+  totalEarnings: 45000
 };
 
 export const MOCK_APPLICATIONS: Application[] = [

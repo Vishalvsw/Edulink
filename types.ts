@@ -49,3 +49,10 @@ export interface DashboardStats {
   pendingReview: number;
   activeAgents: number;
 }
+
+export interface AgentStats {
+  totalLeads: number;
+  conversions: number;
+  pendingCommissions: number;
+  totalEarnings: number;
+}

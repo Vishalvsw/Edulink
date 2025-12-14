@@ -3,9 +3,15 @@ import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import PublicLayout from './components/PublicLayout';
 import PortalLayout from './components/PortalLayout';
 import Home from './pages/public/Home';
+import Courses from './pages/public/Courses';
+import About from './pages/public/About';
+import Contact from './pages/public/Contact';
 import Login from './pages/public/Login';
+import AgentSignup from './pages/public/AgentSignup';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminApplications from './pages/admin/AdminApplications';
 import StudentDashboard from './pages/student/StudentDashboard';
+import AgentDashboard from './pages/agent/AgentDashboard';
 import ApplicationForm from './pages/student/ApplicationForm';
 import { User } from './types';
 
@@ -34,10 +40,11 @@ const App: React.FC = () => {
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/courses" element={<Placeholder title="Course Catalog" />} />
-          <Route path="/about" element={<Placeholder title="About Us" />} />
-          <Route path="/contact" element={<Placeholder title="Contact Us" />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/agent-signup" element={<AgentSignup />} />
         </Route>
 
         {/* Protected Routes - Portal Layout */}
@@ -45,9 +52,11 @@ const App: React.FC = () => {
           
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/applications" element={<Placeholder title="Application Management" />} />
+          <Route path="/admin/applications" element={<AdminApplications />} />
           <Route path="/admin/agents" element={<Placeholder title="Agent Management" />} />
           <Route path="/admin/finance" element={<Placeholder title="Finance & Fees" />} />
+          <Route path="/admin/reports" element={<Placeholder title="Reports & Analytics" />} />
+          <Route path="/admin/settings" element={<Placeholder title="Settings" />} />
           
           {/* Student Routes */}
           <Route path="/student/dashboard" element={<StudentDashboard />} />
@@ -55,8 +64,10 @@ const App: React.FC = () => {
           <Route path="/student/payments" element={<Placeholder title="Payment History" />} />
 
           {/* Agent Routes */}
-          <Route path="/agent/dashboard" element={<Placeholder title="Agent Dashboard" />} />
+          <Route path="/agent/dashboard" element={<AgentDashboard />} />
           <Route path="/agent/leads" element={<Placeholder title="Lead Management" />} />
+          <Route path="/agent/applications" element={<Placeholder title="Application Status" />} />
+          <Route path="/agent/commissions" element={<Placeholder title="Commission History" />} />
         
         </Route>
 
