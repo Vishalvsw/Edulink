@@ -2,25 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { dataService } from '../../services/mockService';
 import { Application, ApplicationStatus } from '../../types';
-import { Clock, CheckCircle, AlertCircle, FileText, ArrowRight } from 'lucide-react';
+import { Clock, CheckCircle, AlertCircle, FileText, ArrowRight, RefreshCw } from 'lucide-react';
 
 const StudentDashboard: React.FC = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulating fetching ONLY student's applications
+  const loadData = () => {
+    setLoading(true);
+    // Fetch active applications from storage
     dataService.getRecentApplications().then(apps => {
-      setApplications(apps.slice(0, 2)); // Just take a few for demo
+      // In a real app we'd filter by user ID, for now we show recent ones to simulate activity
+      setApplications(apps);
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">My Dashboard</h1>
-        <p className="text-slate-500">Track your application progress and next steps.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">My Dashboard</h1>
+          <p className="text-slate-500">Track your application progress and next steps.</p>
+        </div>
+        <button 
+          onClick={loadData}
+          className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"
+          title="Refresh Data"
+        >
+          <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+        </button>
       </div>
 
       {/* Action Banner */}
@@ -53,6 +68,11 @@ const StudentDashboard: React.FC = () => {
              <div className="h-32 bg-slate-200 rounded-xl"></div>
              <div className="h-32 bg-slate-200 rounded-xl"></div>
           </div>
+        ) : applications.length === 0 ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+            <p className="text-slate-500 mb-4">You haven't submitted any applications yet.</p>
+            <Link to="/student/apply" className="text-indigo-600 font-medium hover:underline">Start your first application</Link>
+          </div>
         ) : (
           <div className="space-y-4">
             {applications.map((app) => (
@@ -66,11 +86,11 @@ const StudentDashboard: React.FC = () => {
                       <p className="text-sm text-slate-500">Applied on {app.appliedDate}</p>
                     </div>
                     <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                      app.status === ApplicationStatus.APPROVED ? 'bg-green-100 text-green-700' :
+                      app.status === ApplicationStatus.APPROVED || app.status === ApplicationStatus.ENROLLED ? 'bg-green-100 text-green-700' :
                       app.status === ApplicationStatus.REJECTED ? 'bg-red-100 text-red-700' :
                       'bg-yellow-100 text-yellow-700'
                     }`}>
-                      {app.status === ApplicationStatus.APPROVED ? <CheckCircle className="h-4 w-4 mr-1.5"/> :
+                      {app.status === ApplicationStatus.APPROVED || app.status === ApplicationStatus.ENROLLED ? <CheckCircle className="h-4 w-4 mr-1.5"/> :
                        app.status === ApplicationStatus.REJECTED ? <AlertCircle className="h-4 w-4 mr-1.5"/> :
                        <Clock className="h-4 w-4 mr-1.5"/>}
                       {app.status}
@@ -90,7 +110,11 @@ const StudentDashboard: React.FC = () => {
                      ></div>
                    </div>
                    <div className="pt-2 text-sm text-slate-600 flex items-center justify-between">
-                      <span>Next Step: {app.progress === 100 ? 'Wait for enrollment packet' : 'Complete document upload'}</span>
+                      <span>
+                        {app.status === ApplicationStatus.APPROVED ? 'Congratulations! Admission Granted.' : 
+                         app.status === ApplicationStatus.REJECTED ? 'Application returned.' :
+                         'Application under review by administration.'}
+                      </span>
                       <button className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center">
                         View Details <ArrowRight className="h-4 w-4 ml-1" />
                       </button>

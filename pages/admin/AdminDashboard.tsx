@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 import { dataService } from '../../services/mockService';
 import { DashboardStats, Application, ApplicationStatus } from '../../types';
-import { TrendingUp, Users, FileText, DollarSign, Download, Search } from 'lucide-react';
+import { TrendingUp, Users, FileText, DollarSign, Download, RefreshCw } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -10,27 +10,29 @@ const AdminDashboard: React.FC = () => {
   const [recentApps, setRecentApps] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [statsData, cData, appsData] = await Promise.all([
+        dataService.getStats(),
+        dataService.getChartData(),
+        dataService.getRecentApplications()
+      ]);
+      setStats(statsData);
+      setChartData(cData);
+      setRecentApps(appsData);
+    } catch (e) {
+      console.error("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [statsData, cData, appsData] = await Promise.all([
-          dataService.getStats(),
-          dataService.getChartData(),
-          dataService.getRecentApplications()
-        ]);
-        setStats(statsData);
-        setChartData(cData);
-        setRecentApps(appsData);
-      } catch (e) {
-        console.error("Failed to load dashboard data");
-      } finally {
-        setLoading(false);
-      }
-    };
     loadData();
   }, []);
 
-  if (loading) return <div className="flex h-full items-center justify-center p-12"><div className="animate-pulse text-slate-400">Loading Dashboard...</div></div>;
+  if (loading && !stats) return <div className="flex h-full items-center justify-center p-12"><div className="animate-pulse text-slate-400">Loading Dashboard...</div></div>;
 
   const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
@@ -47,8 +49,10 @@ const AdminDashboard: React.FC = () => {
   const getStatusColor = (status: ApplicationStatus) => {
     switch (status) {
       case ApplicationStatus.APPROVED: return 'bg-green-100 text-green-800';
+      case ApplicationStatus.ENROLLED: return 'bg-indigo-100 text-indigo-800';
       case ApplicationStatus.REJECTED: return 'bg-red-100 text-red-800';
       case ApplicationStatus.UNDER_REVIEW: return 'bg-yellow-100 text-yellow-800';
+      case ApplicationStatus.SUBMITTED: return 'bg-blue-100 text-blue-800';
       default: return 'bg-slate-100 text-slate-800';
     }
   };
@@ -60,10 +64,19 @@ const AdminDashboard: React.FC = () => {
            <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
            <p className="text-slate-500">Welcome back, here is what's happening today.</p>
         </div>
-        <button className="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
-          <Download className="h-4 w-4 mr-2" />
-          Export Report
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={loadData}
+            className="inline-flex items-center px-3 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+          <button className="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
+            <Download className="h-4 w-4 mr-2" />
+            Export Report
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}
