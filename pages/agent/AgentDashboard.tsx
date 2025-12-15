@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, DollarSign, CheckCircle, Clock, TrendingUp, UserPlus, Filter } from 'lucide-react';
+import { Users, DollarSign, CheckCircle, Clock, TrendingUp, UserPlus, Filter, Wallet, ArrowUpRight } from 'lucide-react';
 import { dataService } from '../../services/mockService';
 import { AgentStats, Application, ApplicationStatus } from '../../types';
 
@@ -122,6 +122,88 @@ const AgentDashboard: React.FC = () => {
              <span className="font-medium">+12%</span>
              <span className="text-slate-400 ml-2">vs last month</span>
           </div>
+        </div>
+      </div>
+
+      {/* Financial Overview Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Detailed Earnings Card */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-slate-900">Financial Overview</h2>
+            <button className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View Full Report</button>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 rounded-lg bg-indigo-50 border border-indigo-100">
+              <p className="text-xs font-medium text-indigo-600 uppercase tracking-wide">Total Earnings</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">₹{stats?.totalEarnings.toLocaleString()}</p>
+            </div>
+            <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-100">
+              <p className="text-xs font-medium text-yellow-700 uppercase tracking-wide">Pending</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">₹{stats?.pendingCommissions.toLocaleString()}</p>
+            </div>
+            <div className="p-4 rounded-lg bg-green-50 border border-green-100">
+              <p className="text-xs font-medium text-green-700 uppercase tracking-wide">Available</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">₹5,200</p>
+              <div className="mt-2 flex items-center text-xs text-green-700">
+                 <CheckCircle className="h-3 w-3 mr-1" /> Ready for withdrawal
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900 mb-3">Recent Payouts</h3>
+            <div className="space-y-3">
+              {[
+                { id: 'PAY-8821', date: 'Oct 15, 2023', amount: 12500, status: 'Completed' },
+                { id: 'PAY-7734', date: 'Sep 15, 2023', amount: 8000, status: 'Completed' },
+              ].map((payout) => (
+                <div key={payout.id} className="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                      <ArrowUpRight className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">Payout {payout.id}</p>
+                      <p className="text-xs text-slate-500">{payout.date}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-slate-900">₹{payout.amount.toLocaleString()}</p>
+                    <span className="text-xs text-green-600 font-medium">{payout.status}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Incentive Card */}
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-xl text-white shadow-lg flex flex-col justify-between">
+          <div>
+            <div className="h-10 w-10 bg-indigo-500 rounded-lg flex items-center justify-center mb-4 shadow-lg">
+              <Wallet className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">Next Milestone</h3>
+            <p className="text-slate-300 text-sm mb-6">
+              Reach ₹50,000 in total earnings to unlock the Platinum Agent badge and reduce payout processing time.
+            </p>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-medium text-slate-300">
+                <span>Progress</span>
+                <span>90%</span>
+              </div>
+              <div className="w-full bg-slate-700 rounded-full h-2">
+                <div className="bg-indigo-500 h-2 rounded-full" style={{ width: '90%' }}></div>
+              </div>
+              <p className="text-xs text-slate-400 mt-2">Only ₹5,000 more to go!</p>
+            </div>
+          </div>
+          <button className="w-full mt-6 py-2.5 bg-white text-slate-900 rounded-lg font-bold text-sm hover:bg-slate-100 transition-colors">
+            View Rewards
+          </button>
         </div>
       </div>
 
